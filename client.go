@@ -5,10 +5,11 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/x6doooo/go-futu-api/pb/InitConnect"
-	"github.com/golang/protobuf/proto"
 	"log"
 	"sync"
+
+	"github.com/futuopen/ftapi4go/pb/initconnect"
+	"github.com/golang/protobuf/proto"
 )
 
 var (
@@ -103,7 +104,7 @@ func (me *Client) WatchMessage() {
 			return
 		}
 
-		resp := &InitConnect.Response{}
+		resp := &initconnect.Response{}
 		err = proto.Unmarshal(scannedPack.GetBody(), resp)
 
 		sid := scannedPack.GetSerialNoStr()

@@ -1,9 +1,10 @@
 package go_futu_api
 
 import (
-	"github.com/golang/protobuf/proto"
-	"github.com/x6doooo/go-futu-api/pb/InitConnect"
 	"net"
+
+	"github.com/futuopen/ftapi4go/pb/initconnect"
+	"github.com/golang/protobuf/proto"
 )
 
 type SocketClient struct {
@@ -26,7 +27,7 @@ func (me *SocketClient) Connect() error {
 	return nil
 }
 
-func (me *SocketClient)HandleWrite() {
+func (me *SocketClient) HandleWrite() {
 
 	pack := &FutuPack{}
 	pack.SetProtoID(uint32(1001))
@@ -36,8 +37,8 @@ func (me *SocketClient)HandleWrite() {
 	ClientVer := int32(307)
 	ClientID := "test123456"
 
-	fut := &InitConnect.Request{
-		C2S: &InitConnect.C2S{
+	fut := &initconnect.Request{
+		C2S: &initconnect.C2S{
 			ClientID:  &ClientID,
 			ClientVer: &ClientVer,
 		},
@@ -53,6 +54,7 @@ func (me *SocketClient)HandleWrite() {
 	pack.Send(me.conn)
 
 }
+
 //func (me *SocketClient) handleMessage() {}
 
 //func (me *Client)

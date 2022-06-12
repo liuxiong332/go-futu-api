@@ -1,91 +1,89 @@
 package go_futu_api
 
 import (
-	"github.com/x6doooo/go-futu-api/pb/Qot_Common"
-	"github.com/x6doooo/go-futu-api/pb/Qot_GetBasicQot"
-	"github.com/x6doooo/go-futu-api/pb/Qot_GetPlateSecurity"
-	"github.com/x6doooo/go-futu-api/pb/Qot_GetPlateSet"
-	"github.com/x6doooo/go-futu-api/pb/Qot_GetSecuritySnapshot"
-	"github.com/x6doooo/go-futu-api/pb/Qot_GetStaticInfo"
-	"github.com/x6doooo/go-futu-api/pb/Qot_GetTradeDate"
+	"github.com/futuopen/ftapi4go/pb/qotcommon"
+	"github.com/futuopen/ftapi4go/pb/qotgetbasicqot"
+	"github.com/futuopen/ftapi4go/pb/qotgetplatesecurity"
+	"github.com/futuopen/ftapi4go/pb/qotgetplateset"
+	"github.com/futuopen/ftapi4go/pb/qotgetsecuritysnapshot"
+	"github.com/futuopen/ftapi4go/pb/qotgetstaticinfo"
+	"github.com/futuopen/ftapi4go/pb/qotgettradedate"
 )
 
-func (me *Client) GetBasicQot(list []*Qot_Common.Security) (resp *Qot_GetBasicQot.Response, err error) {
-	req := &Qot_GetBasicQot.Request{
-		C2S: &Qot_GetBasicQot.C2S{
+func (me *Client) GetBasicQot(list []*qotcommon.Security) (resp *qotgetbasicqot.Response, err error) {
+	req := &qotgetbasicqot.Request{
+		C2S: &qotgetbasicqot.C2S{
 			SecurityList: list,
 		},
 	}
-	resp = &Qot_GetBasicQot.Response{}
+	resp = &qotgetbasicqot.Response{}
 	err = me.DoRequest(uint32(3004), req, resp)
 	return
 }
 
-
 func (me *Client) GetTradeDate(
-	market Qot_Common.QotMarket,
+	market qotcommon.QotMarket,
 	beginTime string,
 	endTime string,
-) (resp *Qot_GetTradeDate.Response, err error) {
+) (resp *qotgettradedate.Response, err error) {
 	marketInt32 := int32(market)
-	req := &Qot_GetTradeDate.Request{
-		C2S: &Qot_GetTradeDate.C2S{
-			Market: &marketInt32,
+	req := &qotgettradedate.Request{
+		C2S: &qotgettradedate.C2S{
+			Market:    &marketInt32,
 			BeginTime: &beginTime,
-			EndTime: &endTime,
+			EndTime:   &endTime,
 		},
 	}
-	resp = &Qot_GetTradeDate.Response{}
+	resp = &qotgettradedate.Response{}
 	err = me.DoRequest(uint32(3200), req, resp)
 	return
 }
 
-
-func (me *Client) GetSecuritySnapshot(list []*Qot_Common.Security) (resp *Qot_GetSecuritySnapshot.Response, err error) {
-	req := &Qot_GetSecuritySnapshot.Request{
-		C2S: &Qot_GetSecuritySnapshot.C2S{
+func (me *Client) GetSecuritySnapshot(list []*qotcommon.Security) (resp *qotgetsecuritysnapshot.Response, err error) {
+	req := &qotgetsecuritysnapshot.Request{
+		C2S: &qotgetsecuritysnapshot.C2S{
 			SecurityList: list,
 		},
 	}
-	resp = &Qot_GetSecuritySnapshot.Response{}
+	resp = &qotgetsecuritysnapshot.Response{}
 	err = me.DoRequest(uint32(3203), req, resp)
 	return
 }
 
 func (me *Client) GetPlateSet(
-	market Qot_Common.QotMarket,
-	plateSetType Qot_Common.PlateSetType,
-) (resp *Qot_GetPlateSet.Response, err error) {
+	market qotcommon.QotMarket,
+	plateSetType qotcommon.PlateSetType,
+) (resp *qotgetplateset.Response, err error) {
 	marketParam := int32(market)
 	plateSetTypeParam := int32(plateSetType)
-	req := &Qot_GetPlateSet.Request{
-		C2S: &Qot_GetPlateSet.C2S{
+	req := &qotgetplateset.Request{
+		C2S: &qotgetplateset.C2S{
 			Market:       &marketParam,
 			PlateSetType: &plateSetTypeParam,
 		},
 	}
-	resp = &Qot_GetPlateSet.Response{}
+	resp = &qotgetplateset.Response{}
 	err = me.DoRequest(uint32(3204), req, resp)
 	return
 }
 
-func (me *Client) GetPlateSecurity(plate *Qot_Common.Security) (resp *Qot_GetPlateSecurity.Response, err error) {
-	req := &Qot_GetPlateSecurity.Request{
-		C2S: &Qot_GetPlateSecurity.C2S{
+func (me *Client) GetPlateSecurity(plate *qotcommon.Security) (resp *qotgetplatesecurity.Response, err error) {
+	req := &qotgetplatesecurity.Request{
+		C2S: &qotgetplatesecurity.C2S{
 			Plate: plate,
 		},
 	}
-	resp = &Qot_GetPlateSecurity.Response{}
+	resp = &qotgetplatesecurity.Response{}
 	err = me.DoRequest(uint32(3205), req, resp)
 	return
 }
 
 func (me *Client) GetStaticInfo(
-	market *Qot_Common.QotMarket,
-	secType *Qot_Common.SecurityType,
-	list []*Qot_Common.Security,
-) (resp *Qot_GetStaticInfo.Response, err error) {
-	c2s := &Qot_GetStaticInfo.C2S{}
+	market *qotcommon.QotMarket,
+	secType *qotcommon.SecurityType,
+	list []*qotcommon.Security,
+) (resp *qotgetstaticinfo.Response, err error) {
+	c2s := &qotgetstaticinfo.C2S{}
 	if market != nil {
 		marketInt32 := int32(*market)
 		c2s.Market = &marketInt32
@@ -97,10 +95,10 @@ func (me *Client) GetStaticInfo(
 	if len(list) != 0 {
 		c2s.SecurityList = list
 	}
-	req := &Qot_GetStaticInfo.Request{
+	req := &qotgetstaticinfo.Request{
 		C2S: c2s,
 	}
-	resp = &Qot_GetStaticInfo.Response{}
+	resp = &qotgetstaticinfo.Response{}
 	err = me.DoRequest(uint32(3202), req, resp)
 	return
 }

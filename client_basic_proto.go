@@ -1,31 +1,32 @@
 package go_futu_api
 
 import (
-	"github.com/x6doooo/go-futu-api/pb/InitConnect"
-	"github.com/x6doooo/go-futu-api/pb/KeepAlive"
 	"time"
+
+	"github.com/futuopen/ftapi4go/pb/initconnect"
+	"github.com/futuopen/ftapi4go/pb/keepalive"
 )
 
-func (me *Client) InitConnect() (resp *InitConnect.Response, err error) {
-	req := &InitConnect.Request{
-		C2S: &InitConnect.C2S{
+func (me *Client) InitConnect() (resp *initconnect.Response, err error) {
+	req := &initconnect.Request{
+		C2S: &initconnect.C2S{
 			ClientID:  &ClientID,
 			ClientVer: &ClientVer,
 		},
 	}
-	resp = &InitConnect.Response{}
+	resp = &initconnect.Response{}
 	err = me.DoRequest(uint32(1001), req, resp)
 	return
 }
 
-func (me *Client) KeepAlive() (resp *KeepAlive.Response, err error) {
+func (me *Client) KeepAlive() (resp *keepalive.Response, err error) {
 	t := int64(time.Now().Second())
-	req := &KeepAlive.Request{
-		C2S: &KeepAlive.C2S{
+	req := &keepalive.Request{
+		C2S: &keepalive.C2S{
 			Time: &t,
 		},
 	}
-	resp = &KeepAlive.Response{}
+	resp = &keepalive.Response{}
 	err = me.DoRequest(uint32(1004), req, resp)
 	return
 }
