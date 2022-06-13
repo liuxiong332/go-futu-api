@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/futuopen/ftapi4go/pb/qotcommon"
 	gf "github.com/liuxiong332/go-futu-api"
+	"github.com/liuxiong332/go-futu-api/pb/qotcommon"
 )
 
 func main() {

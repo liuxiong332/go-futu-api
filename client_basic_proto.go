@@ -3,8 +3,8 @@ package go_futu_api
 import (
 	"time"
 
-	"github.com/futuopen/ftapi4go/pb/initconnect"
-	"github.com/futuopen/ftapi4go/pb/keepalive"
+	"github.com/liuxiong332/go-futu-api/pb/initconnect"
+	"github.com/liuxiong332/go-futu-api/pb/keepalive"
 )
 
 func (me *Client) InitConnect() (resp *initconnect.Response, err error) {

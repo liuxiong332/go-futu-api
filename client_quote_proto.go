@@ -1,13 +1,13 @@
 package go_futu_api
 
 import (
-	"github.com/futuopen/ftapi4go/pb/qotcommon"
-	"github.com/futuopen/ftapi4go/pb/qotgetbasicqot"
-	"github.com/futuopen/ftapi4go/pb/qotgetplatesecurity"
-	"github.com/futuopen/ftapi4go/pb/qotgetplateset"
-	"github.com/futuopen/ftapi4go/pb/qotgetsecuritysnapshot"
-	"github.com/futuopen/ftapi4go/pb/qotgetstaticinfo"
-	"github.com/futuopen/ftapi4go/pb/qotgettradedate"
+	"github.com/liuxiong332/go-futu-api/pb/qotcommon"
+	"github.com/liuxiong332/go-futu-api/pb/qotgetbasicqot"
+	"github.com/liuxiong332/go-futu-api/pb/qotgetplatesecurity"
+	"github.com/liuxiong332/go-futu-api/pb/qotgetplateset"
+	"github.com/liuxiong332/go-futu-api/pb/qotgetsecuritysnapshot"
+	"github.com/liuxiong332/go-futu-api/pb/qotgetstaticinfo"
+	"github.com/liuxiong332/go-futu-api/pb/qotgettradedate"
 )
 
 func (me *Client) GetBasicQot(list []*qotcommon.Security) (resp *qotgetbasicqot.Response, err error) {
