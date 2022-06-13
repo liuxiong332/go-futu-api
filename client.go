@@ -8,8 +8,8 @@ import (
 	"log"
 	"sync"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/liuxiong332/go-futu-api/pb/initconnect"
+	"google.golang.org/protobuf/proto"
 )
 
 var (

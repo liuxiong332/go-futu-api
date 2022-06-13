@@ -3,8 +3,8 @@ package go_futu_api
 import (
 	"net"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/liuxiong332/go-futu-api/pb/initconnect"
+	"google.golang.org/protobuf/proto"
 )
 
 type SocketClient struct {
