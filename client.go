@@ -74,6 +74,7 @@ func (me *Client) DoRequest(protoId uint32, request proto.Message, response prot
 		return err
 	}
 
+	pack.CalcSha1(body)
 	if protoId == 1001 {
 		// 初始化连接，使用rsa进行加密
 		if me.rsaPrivateKey != nil {

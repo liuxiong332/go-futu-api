@@ -31,9 +31,11 @@ func (p *FutuPack) SetProtoID(nProtoID uint32) {
 func (p *FutuPack) SetBody(body []byte) {
 	p.body = body
 	p.nBodyLen = uint32(len(body))
+}
 
+func (p *FutuPack) CalcSha1(body []byte) {
 	sha := sha1.New()
-	sha.Write(p.body)
+	sha.Write(body)
 	arrBodySHA1 := sha.Sum(nil)
 	copy(p.arrBodySHA1[:], arrBodySHA1)
 }
