@@ -52,19 +52,6 @@ func (me *Client) Run() (err error) {
 }
 
 func (me *Client) SyncDo(requestPack *FutuPack) (*FutuPack, error) {
-	if requestPack.nProtoID == 1001 {
-		// 初始化连接，使用rsa进行加密
-		if me.rsaPrivateKey != nil {
-			body, err := RsaEncrypt(me.rsaPrivateKey, requestPack.body)
-			if err != nil {
-				return nil, err
-			}
-			requestPack.body = body
-		}
-	} else if me.aesCipher != nil {
-		// 其他请求使用AES进行加密
-		requestPack.body = me.aesCipher.Encrypt(requestPack.body)
-	}
 	ch := make(chan *FutuPack)
 	defer close(ch)
 	if err := requestPack.Send(me.socket.conn); err != nil {
@@ -86,7 +73,21 @@ func (me *Client) DoRequest(protoId uint32, request proto.Message, response prot
 	if err != nil {
 		return err
 	}
+
+	if protoId == 1001 {
+		// 初始化连接，使用rsa进行加密
+		if me.rsaPrivateKey != nil {
+			body, err = RsaEncrypt(me.rsaPrivateKey, body)
+			if err != nil {
+				return err
+			}
+		}
+	} else if me.aesCipher != nil {
+		// 其他请求使用AES进行加密
+		body = me.aesCipher.Encrypt(body)
+	}
 	pack.SetBody(body)
+
 	respPack, err := me.SyncDo(pack)
 	if err != nil {
 		return err
