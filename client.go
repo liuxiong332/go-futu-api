@@ -3,12 +3,12 @@ package go_futu_api
 import (
 	"bufio"
 	"bytes"
+	"crypto/rsa"
 	"encoding/binary"
 	"fmt"
 	"log"
 	"sync"
 
-	"github.com/liuxiong332/go-futu-api/pb/initconnect"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -18,14 +18,25 @@ var (
 )
 
 type Client struct {
-	packChanMap sync.Map
-	socket      *SocketClient
+	packChanMap   sync.Map
+	socket        *SocketClient
+	rsaPrivateKey *rsa.PrivateKey
+	aesCipher     *AESCipher
 }
 
 func NewClient(addr string) *Client {
 	return &Client{
 		socket: NewSocketClient(addr),
 	}
+}
+
+func (me *Client) SetRSAPrivateKey(key string) error {
+	rsaPrivateKey, err := GenRsaPair([]byte(key))
+	if err != nil {
+		return err
+	}
+	me.rsaPrivateKey = rsaPrivateKey
+	return nil
 }
 
 func (me *Client) Run() (err error) {
@@ -40,27 +51,33 @@ func (me *Client) Run() (err error) {
 	return
 }
 
-func (me *Client) SyncDo(requestPack *FutuPack) (responsePack *FutuPack, err error) {
+func (me *Client) SyncDo(requestPack *FutuPack) (*FutuPack, error) {
+	if requestPack.nProtoID == 1001 {
+		// 初始化连接，使用rsa进行加密
+		if me.rsaPrivateKey != nil {
+			body, err := RsaEncrypt(me.rsaPrivateKey, requestPack.body)
+			if err != nil {
+				return nil, err
+			}
+			requestPack.body = body
+		}
+	} else if me.aesCipher != nil {
+		// 其他请求使用AES进行加密
+		requestPack.body = me.aesCipher.Encrypt(requestPack.body)
+	}
 	ch := make(chan *FutuPack)
 	defer close(ch)
-	err = requestPack.Send(me.socket.conn)
+	if err := requestPack.Send(me.socket.conn); err != nil {
+		return nil, err
+	}
 	sid := requestPack.GetSerialNoStr()
 	me.packChanMap.Store(sid, ch)
-	//log.Println("send msg", sid)
-	responsePack = <-ch
-	return
-}
+	defer me.packChanMap.Delete(sid)
 
-//func (me *Client) DoRequest(protoId uint32, request proto.Message) (*FutuPack, error) {
-//	pack := &FutuPack{}
-//	pack.SetProtoID(protoId)
-//	body, err := proto.Marshal(request)
-//	if err != nil {
-//		return nil, err
-//	}
-//	pack.SetBody(body)
-//	return me.SyncDo(pack)
-//}
+	//log.Println("send msg", sid)
+	responsePack := <-ch
+	return responsePack, nil
+}
 
 func (me *Client) DoRequest(protoId uint32, request proto.Message, response proto.Message) error {
 	pack := &FutuPack{}
@@ -99,13 +116,23 @@ func (me *Client) WatchMessage() {
 
 	for scanner.Scan() {
 		scannedPack := new(FutuPack)
-		err := scannedPack.Unpack(bytes.NewReader(scanner.Bytes()))
-		if err != nil {
+		if err := scannedPack.Unpack(bytes.NewReader(scanner.Bytes())); err != nil {
 			return
 		}
 
-		resp := &initconnect.Response{}
-		err = proto.Unmarshal(scannedPack.GetBody(), resp)
+		// 初始化连接，使用rsa进行解密
+		if scannedPack.nProtoID == 1001 {
+			if me.rsaPrivateKey != nil {
+				body, err := RsaEncrypt(me.rsaPrivateKey, scannedPack.body)
+				if err != nil {
+					fmt.Printf("Invalid init content reply error: %v\n", err)
+				}
+				scannedPack.body = body
+			}
+		} else if me.aesCipher != nil {
+			// 其他请求使用AES进行解密
+			scannedPack.body = me.aesCipher.Decrypt(scannedPack.body)
+		}
 
 		sid := scannedPack.GetSerialNoStr()
 		chInterface, ok := me.packChanMap.Load(sid)
@@ -113,7 +140,6 @@ func (me *Client) WatchMessage() {
 			ch := chInterface.(chan *FutuPack)
 			ch <- scannedPack
 		}
-
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Println("无效数据包", err)

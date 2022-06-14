@@ -69,16 +69,33 @@ func (p *FutuPack) Send(writer io.Writer) error {
 	var arrReservedTmp [20]uint8
 	copy(p.arrReserved[:], arrReservedTmp[:20])
 
-	err = binary.Write(writer, binary.LittleEndian, &p.szHeaderFlag)
-	err = binary.Write(writer, binary.LittleEndian, &p.nProtoID)
-	err = binary.Write(writer, binary.LittleEndian, &p.nProtoFmtType)
-	err = binary.Write(writer, binary.LittleEndian, &p.nProtoVer)
-	err = binary.Write(writer, binary.LittleEndian, &p.nSerialNo)
-	err = binary.Write(writer, binary.LittleEndian, &p.nBodyLen)
-	err = binary.Write(writer, binary.LittleEndian, &p.arrBodySHA1)
-	err = binary.Write(writer, binary.LittleEndian, &p.arrReserved)
-
-	err = binary.Write(writer, binary.LittleEndian, &p.body)
+	if err = binary.Write(writer, binary.LittleEndian, &p.szHeaderFlag); err != nil {
+		return err
+	}
+	if err = binary.Write(writer, binary.LittleEndian, &p.nProtoID); err != nil {
+		return err
+	}
+	if err = binary.Write(writer, binary.LittleEndian, &p.nProtoFmtType); err != nil {
+		return err
+	}
+	if err = binary.Write(writer, binary.LittleEndian, &p.nProtoVer); err != nil {
+		return err
+	}
+	if err = binary.Write(writer, binary.LittleEndian, &p.nSerialNo); err != nil {
+		return err
+	}
+	if err = binary.Write(writer, binary.LittleEndian, &p.nBodyLen); err != nil {
+		return err
+	}
+	if err = binary.Write(writer, binary.LittleEndian, &p.arrBodySHA1); err != nil {
+		return err
+	}
+	if err = binary.Write(writer, binary.LittleEndian, &p.arrReserved); err != nil {
+		return err
+	}
+	if err = binary.Write(writer, binary.LittleEndian, &p.body); err != nil {
+		return err
+	}
 
 	return err
 }
@@ -86,14 +103,30 @@ func (p *FutuPack) Send(writer io.Writer) error {
 // Unpack unpack
 func (p *FutuPack) Unpack(reader io.Reader) error {
 	var err error
-	err = binary.Read(reader, binary.LittleEndian, &p.szHeaderFlag)
-	err = binary.Read(reader, binary.LittleEndian, &p.nProtoID)
-	err = binary.Read(reader, binary.LittleEndian, &p.nProtoFmtType)
-	err = binary.Read(reader, binary.LittleEndian, &p.nProtoVer)
-	err = binary.Read(reader, binary.LittleEndian, &p.nSerialNo)
-	err = binary.Read(reader, binary.LittleEndian, &p.nBodyLen)
-	err = binary.Read(reader, binary.LittleEndian, &p.arrBodySHA1)
-	err = binary.Read(reader, binary.LittleEndian, &p.arrReserved)
+	if err = binary.Read(reader, binary.LittleEndian, &p.szHeaderFlag); err != nil {
+		return err
+	}
+	if err = binary.Read(reader, binary.LittleEndian, &p.nProtoID); err != nil {
+		return err
+	}
+	if err = binary.Read(reader, binary.LittleEndian, &p.nProtoFmtType); err != nil {
+		return err
+	}
+	if err = binary.Read(reader, binary.LittleEndian, &p.nProtoVer); err != nil {
+		return err
+	}
+	if err = binary.Read(reader, binary.LittleEndian, &p.nSerialNo); err != nil {
+		return err
+	}
+	if err = binary.Read(reader, binary.LittleEndian, &p.nBodyLen); err != nil {
+		return err
+	}
+	if err = binary.Read(reader, binary.LittleEndian, &p.arrBodySHA1); err != nil {
+		return err
+	}
+	if err = binary.Read(reader, binary.LittleEndian, &p.arrReserved); err != nil {
+		return err
+	}
 
 	p.body = make([]byte, p.nBodyLen)
 	err = binary.Read(reader, binary.LittleEndian, &p.body)
@@ -113,6 +146,3 @@ func (p *FutuPack) String() string {
 func (p *FutuPack) GetBody() []byte {
 	return p.body
 }
-
-
-

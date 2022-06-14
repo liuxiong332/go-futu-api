@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	gf "github.com/liuxiong332/go-futu-api"
@@ -12,6 +13,15 @@ import (
 func main() {
 	// 初始化opend的配置
 	cli := gf.NewClient("0.0.0.0:11111")
+
+	if _, err := os.Stat("./rsa_key"); err == nil {
+		rsaKey, err := os.ReadFile("./rsa_key")
+		if err != nil {
+			log.Fatalf("Not valid rsa key")
+		}
+		log.Printf("Use rsa key")
+		cli.SetRSAPrivateKey(string(rsaKey))
+	}
 
 	// 启动
 	err := cli.Run()

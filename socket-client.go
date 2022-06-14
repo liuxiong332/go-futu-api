@@ -54,7 +54,3 @@ func (me *SocketClient) HandleWrite() {
 	pack.Send(me.conn)
 
 }
-
-//func (me *SocketClient) handleMessage() {}
-
-//func (me *Client)
