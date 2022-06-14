@@ -123,7 +123,7 @@ func (me *Client) WatchMessage() {
 		// 初始化连接，使用rsa进行解密
 		if scannedPack.nProtoID == 1001 {
 			if me.rsaPrivateKey != nil {
-				body, err := RsaEncrypt(me.rsaPrivateKey, scannedPack.body)
+				body, err := RsaDecrypt(me.rsaPrivateKey, scannedPack.body)
 				if err != nil {
 					fmt.Printf("Invalid init content reply error: %v\n", err)
 				}
